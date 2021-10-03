@@ -1,10 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Post } from "./post.model";
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { Subject, throwError } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
+    error = new Subject<string>();
+
     constructor(private http: HttpClient) { }
 
     createAndStorePost(title: string, content: string) {
@@ -20,6 +23,8 @@ export class PostsService {
             ) //need to subscribe or the request will not be sent by Angular and RxJs
             .subscribe(responseData => { //extracted data
                 console.log(responseData);
+            }, error => {
+                this.error.next(error.message);
             });
     }
 
@@ -41,7 +46,12 @@ export class PostsService {
         }
         return postsArray;
 
-      })) 
+      }),
+      catchError(errorResp => {
+          // send to analystics Error
+        return throwError(errorResp);
+      } )
+      )
     }
 
     deletePosts(){
