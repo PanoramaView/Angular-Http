@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Post } from "./post.model";
 import { map, catchError } from 'rxjs/operators';
@@ -29,10 +29,18 @@ export class PostsService {
     }
 
     fetchPosts() {
+        let searchParams = new HttpParams();
+        searchParams = searchParams.append('print', 'pretty');//URL + ?print=pretty (in Firebase it makes it prettier)
         // Send Http request
     return this.http //with the return, you can subscribe on the component when you call this method
     // resp is an Object with Post nested inside, so now TS knows what type of date is 'resp'
-    .get<{[key: string]: Post}>('https://ng-db-f74bb-default-rtdb.europe-west1.firebasedatabase.app/posts.json')
+    .get<{[key: string]: Post}>(
+        'https://ng-db-f74bb-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
+        {
+            headers: new HttpHeaders({'Custom-Header' : 'Hello'}),
+            params: searchParams
+        }
+        )
     .pipe(// filter your observable data through operations (but not subscribable anymore)
 
     // then return it into an Observable, so that we can subscribe again
