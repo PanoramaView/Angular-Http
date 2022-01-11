@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Post } from './post.model';
 import { PostsService } from './posts.service';
 import { Subscription } from 'rxjs';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -36,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
   onCreatePost(postData: Post) {
     // Send Http request
     this.postsService.createAndStorePost(postData.title, postData.content);
+    this.onFetchPosts();
   }
 
   onFetchPosts() {
